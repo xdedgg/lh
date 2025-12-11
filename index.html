@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>服务打卡系统</title>
+    <title>服务记录功能</title>
     <style>
         * {
             margin: 0;
@@ -33,9 +33,8 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0; /* 初始就隐藏 */
+            opacity: 1; /* 初始可见 */
             transition: opacity 0.5s ease; /* 添加淡出效果 */
-            pointer-events: none; /* 防止干扰其他元素 */
         }
         
         .background-image.hidden {
@@ -45,14 +44,13 @@
         
         .container {
             background-color: rgba(255, 255, 255, 0.3);                 
-            margin-top: 20px;
+            margin-top: 40px;
             position: relative; /* 确保在背景图片上方 */
             z-index: 1;
         }
         
         .main-page {
             text-align: center;
-            display: none; /* 默认隐藏主页面 */
         }
         
         .hello-btn {
@@ -72,7 +70,7 @@
         }
         
         .info-page {
-            display: block; /* 修改：默认显示客户信息页面 */
+            display: none;
         }
         
         .info-line {
@@ -131,7 +129,7 @@
             padding-bottom: 10px;
         }
         
-        /* 服务打卡页面样式 */
+        /* 服务记录页面样式 */
         .service-page {
             display: none;
         }
@@ -569,16 +567,16 @@
             <button onclick="confirmCustomer()" style="background-color: #fa2222; color: white;">确定客户</button>
         </div>
         
-        <!-- 单独一个服务打卡按钮 -->
+        <!-- 单独一个服务记录按钮 -->
         <div class="single-button">
-            <button onclick="serviceCheckIn()" style="background-color: #3498db; color: white;">服务打卡</button>
+            <button onclick="serviceCheckIn()" style="background-color: #3498db; color: white;">服务记录</button>
         </div>
     </div>
     
-    <!-- 服务打卡页面 -->
+    <!-- 服务记录页面 -->
     <div id="servicePage" class="container service-page">
         <div class="header">
-            <h1 class="service-title">服务打卡</h1>
+            <h1 class="service-title">服务记录</h1>
             <button class="btn-return" onclick="returnToInfoPage()">返回客户信息</button>
         </div>
         
@@ -631,7 +629,7 @@
                 <option value="maintenance">设备维护</option>
                 <option value="repair">故障维修</option>
                 <option value="inspection">定期检查</option>
-                <option value="training">协助调试</option>
+                <option value="training">协助操作</option>
                 <option value="consultation">营销咨询</option>
             </select>
         </div>
@@ -684,7 +682,7 @@
             document.getElementById('infoPage').style.display = 'none';
             document.getElementById('servicePage').style.display = 'block';
             
-            // 初始化服务打卡页面
+            // 初始化服务记录页面
             initServicePage();
         }
         
@@ -708,7 +706,7 @@
             showServicePage();
         }
         
-        // 初始化服务打卡页面
+        // 初始化服务记录页面
         function initServicePage() {
             // 检查是否有之前存储的开始时间
             const savedStartTime = localStorage.getItem('serviceStartTime');
@@ -856,7 +854,8 @@
             photos.push(photo);
             renderPhotos();
             
-
+            // 保存到本地存储
+            localStorage.setItem('servicePhotos', JSON.stringify(photos));
             
             // 显示拍照成功提示
             showNotification('照片已添加：' + photo.name);
@@ -892,7 +891,9 @@
             photos = photos.filter(photo => photo.id !== photoId);
             renderPhotos();
             
-                       
+            // 更新本地存储
+            localStorage.setItem('servicePhotos', JSON.stringify(photos));
+            
             // 显示删除成功提示
             showNotification('照片已删除');
         }
@@ -1014,7 +1015,7 @@
         function returnToInfoPage() {
             // 如果服务已开始，提示用户
             if (serviceStartTime) {
-                showNotification('服务进行中，返回客户信息页面。再次点击"服务打卡"可返回此页面继续服务。');
+                showNotification('服务进行中，返回客户信息页面。再次点击"服务记录"可返回此页面继续服务。');
             }
             
             showInfoPage();
@@ -1065,10 +1066,9 @@
             localStorage.setItem('serviceType', this.value);
         });
         
-        // 初始化显示客户信息页面
+        // 初始化显示主页面
         window.onload = function() {
-            // 直接显示客户信息页面
-            showInfoPage();
+            showMainPage();
         };
     </script>
 </body>
